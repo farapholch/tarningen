@@ -46,14 +46,14 @@ export class RollCommand implements ISlashCommand {
             case "tärning":
             case "tarning":
                 const roll = DiceRoller.rollD6();
-                message = ":game_die: " + sender.username + " rolled a **" + roll + "**!";
+                message = ":game_die: " + sender.username + " slog en **" + roll + "**!";
                 break;
 
             case "coin":
             case "flip":
             case "krona":
                 const flip = DiceRoller.flipCoin();
-                const flipResult = flip === "heads" ? "Heads" : "Tails";
+                const flipResult = flip === "heads" ? "Krona" : "Klave";
                 message = ":coin: " + sender.username + ": **" + flipResult + "**!";
                 break;
 
@@ -63,22 +63,24 @@ export class RollCommand implements ISlashCommand {
                 const members = await read.getRoomReader().getMembers(room.id);
                 const picked = DiceRoller.pickRandom(members);
                 if (picked) {
-                    message = ":bust_in_silhouette: **@" + picked.username + "** was randomly selected by " + sender.username + "!";
+                    message = ":bust_in_silhouette: **@" + picked.username + "** valdes slumpmässigt av " + sender.username + "!";
                 } else {
-                    message = ":x: Could not find any members in the channel.";
+                    message = ":x: Kunde inte hitta några medlemmar i kanalen.";
                 }
                 break;
 
             case "help":
-                message = "**:game_die: Roll - Help**\n\n" +
-                    "*/roll* or */roll d6* - Roll a D6 dice\n" +
-                    "*/roll coin* - Flip a coin\n" +
-                    "*/roll person* - Pick a random person in the channel";
+            case "hjälp":
+            case "hjalp":
+                message = "**:game_die: Roll - Hjälp**\n\n" +
+                    "*/roll* eller */roll d6* - Slå en D6-tärning\n" +
+                    "*/roll coin* - Singla slant\n" +
+                    "*/roll person* - Välj slumpmässig person i kanalen";
                 break;
 
             default:
                 const defaultRoll = DiceRoller.rollD6();
-                message = ":game_die: " + sender.username + " rolled a **" + defaultRoll + "**!";
+                message = ":game_die: " + sender.username + " slog en **" + defaultRoll + "**!";
         }
 
         await this.sendMessage(room, message, sender, modify);
