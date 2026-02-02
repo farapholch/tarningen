@@ -1,7 +1,6 @@
 import {
     IAppAccessors,
     IConfigurationExtend,
-    IEnvironmentRead,
     ILogger,
 } from "@rocket.chat/apps-engine/definition/accessors";
 import { App } from "@rocket.chat/apps-engine/definition/App";

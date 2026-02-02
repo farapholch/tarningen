@@ -12,6 +12,7 @@ import { IRoom } from "@rocket.chat/apps-engine/definition/rooms";
 import { IUser } from "@rocket.chat/apps-engine/definition/users";
 import { TarningenApp } from "../TarningenApp";
 import { DiceRoller } from "../lib/DiceRoller";
+import { AVATAR_BASE64 } from "../lib/Avatar";
 
 export class SlumpCommand implements ISlashCommand {
     public command = "slump";
@@ -82,18 +83,18 @@ export class SlumpCommand implements ISlashCommand {
                 message = "❓ Okänt kommando: \"" + subcommand + "\". Skriv */slump hjälp* för att se tillgängliga kommandon.";
         }
 
-        await this.sendMessage(room, message, sender, modify);
+        await this.sendMessage(room, message, modify);
     }
 
     private async sendMessage(
         room: IRoom,
         text: string,
-        sender: IUser,
         modify: IModify
     ): Promise<void> {
         const messageBuilder = modify.getCreator().startMessage()
             .setRoom(room)
-            .setText(text);
+            .setText(text)
+            .setAvatarUrl(AVATAR_BASE64);
 
         await modify.getCreator().finish(messageBuilder);
     }
