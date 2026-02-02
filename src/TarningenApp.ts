@@ -6,6 +6,7 @@ import {
 import { App } from "@rocket.chat/apps-engine/definition/App";
 import { IAppInfo } from "@rocket.chat/apps-engine/definition/metadata";
 import { SlumpCommand } from "./commands/SlumpCommand";
+import { RollCommand } from "./commands/RollCommand";
 
 export class TarningenApp extends App {
     constructor(info: IAppInfo, logger: ILogger, accessors: IAppAccessors) {
@@ -14,5 +15,6 @@ export class TarningenApp extends App {
 
     public async extendConfiguration(configuration: IConfigurationExtend): Promise<void> {
         await configuration.slashCommands.provideSlashCommand(new SlumpCommand(this));
+        await configuration.slashCommands.provideSlashCommand(new RollCommand(this));
     }
 }

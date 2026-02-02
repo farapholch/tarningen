@@ -1,4 +1,6 @@
 {
-    "slump_description": "Random dice, coin or person",
-    "slump_params": "[dice|coin|person|history|help]"
+    "slump_description": "Random dice, coin or person (Swedish)",
+    "slump_params": "[tärning|krona|person|hjälp]",
+    "roll_description": "Roll dice, flip coin or pick random person",
+    "roll_params": "[d6|coin|person|help]"
 }

@@ -1,4 +1,6 @@
 {
     "slump_description": "Slumpa tärning, mynt eller person",
-    "slump_params": "[tärning|krona|person|historik|hjälp]"
+    "slump_params": "[tärning|krona|person|hjälp]",
+    "roll_description": "Slå tärning, singla slant eller välj person",
+    "roll_params": "[d6|coin|person|help]"
 }
