@@ -4,24 +4,31 @@ En Rocket.Chat-app med slumpfunktioner för Snacka.
 
 **Av Team Våffla**
 
-## Funktioner
+## Kommandon
+
+### /slump (Svenska)
 
 | Kommando | Beskrivning |
 |----------|-------------|
-| `/slump tarning` | Slå en D6-tärning |
+| `/slump tärning` | Slå en D6-tärning |
 | `/slump krona` | Singla slant (krona/klave) |
 | `/slump person` | Välj slumpmässig person i kanalen |
-| `/slump hjalp` | Visa hjälptext |
+| `/slump hjälp` | Visa hjälptext |
+
+### /roll (English)
+
+| Command | Description |
+|---------|-------------|
+| `/roll` or `/roll d6` | Roll a D6 dice |
+| `/roll coin` | Flip a coin |
+| `/roll person` | Pick random person in channel |
+| `/roll help` | Show help |
 
 ## Installation
 
-1. Bygg appen:
-   ```bash
-   npm install
-   rc-apps package
-   ```
+1. Ladda ner senaste release från [Releases](https://github.com/farapholch/tarningen/releases)
 
-2. Ladda upp `dist/tarningen_x.x.x.zip` via:
+2. Ladda upp ZIP-filen via:
    - Admin → Marketplace → Private Apps → Upload App
 
 3. Aktivera appen
