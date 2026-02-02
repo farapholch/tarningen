@@ -1,4 +1,4 @@
-# 🎲 Tärningen
+# <img src="icon.png" width="32" alt="icon"> Tärningen
 
 <img src="icon.png" width="128" alt="Tärningen icon">
 
