@@ -2,7 +2,7 @@
 
 En Rocket.Chat-app med slumpfunktioner för Snacka.
 
-**Av Team Våffla**
+**Av Team Våffla** | **Version 1.2.0**
 
 ## Kommandon
 
@@ -24,14 +24,28 @@ En Rocket.Chat-app med slumpfunktioner för Snacka.
 | `/roll person` | Pick random person in channel |
 | `/roll help` | Show help |
 
+## Features
+
+- 🎲 Tärning (D6) och myntkastning
+- 👤 Slumpa person i kanalen
+- 🇸🇪 Stöd för svenska tecken (å, ä, ö)
+- 🔒 Minimala permissions
+- 🎨 Mörkröd tärningsikon som avatar
+
 ## Installation
 
-1. Ladda ner senaste release från [Releases](https://github.com/farapholch/tarningen/releases)
+1. Ladda ner `tarningen_1.2.0.zip` från [Releases](https://github.com/farapholch/tarningen/releases)
 
-2. Ladda upp ZIP-filen via:
-   - Admin → Marketplace → Private Apps → Upload App
+2. I Rocket.Chat: **Admin → Marketplace → Private Apps → Upload App**
 
 3. Aktivera appen
+
+## Permissions
+
+Appen begär endast minimala rättigheter:
+- `slashcommand` - Registrera /slump och /roll
+- `room.read` - Läsa rumsmedlemmar
+- `message.write` - Skicka meddelanden
 
 ## Utveckling
 
