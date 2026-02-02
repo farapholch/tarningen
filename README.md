@@ -1,5 +1,7 @@
 # 🎲 Tärningen
 
+<img src="icon.png" width="128" alt="Tärningen icon">
+
 En Rocket.Chat-app med slumpfunktioner för Snacka.
 
 **Av Team Våffla**
@@ -46,3 +48,7 @@ rc-apps package
 ## Licens
 
 MIT
+
+---
+
+*Icon från [IconsDB](https://www.iconsdb.com) (CC BY-ND 3.0)*
