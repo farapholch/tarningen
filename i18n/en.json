@@ -1,0 +1,4 @@
+{
+    "slump_description": "Random dice, coin or person",
+    "slump_params": "[dice|coin|person|history|help]"
+}

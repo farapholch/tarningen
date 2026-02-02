@@ -1,0 +1,20 @@
+{
+    "name": "tarningen",
+    "version": "1.0.0",
+    "description": "Rocket.Chat app för slumpfunktioner",
+    "main": "src/TarningenApp.ts",
+    "scripts": {
+        "build": "tsc",
+        "package": "rc-apps package",
+        "deploy": "rc-apps deploy --url https://chat.pelleops.se --username admin --password $RC_ADMIN_PASSWORD"
+    },
+    "devDependencies": {
+        "@rocket.chat/apps-engine": "^1.41.0",
+        "typescript": "^5.0.0"
+    },
+    "dependencies": {
+        "@rocket.chat/ui-kit": "^0.39.0",
+        "@types/node": "^16.18.126",
+        "undici-types": "^7.20.0"
+    }
+}

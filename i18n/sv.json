@@ -1,0 +1,4 @@
+{
+    "slump_description": "Slumpa tärning, mynt eller person",
+    "slump_params": "[tärning|krona|person|historik|hjälp]"
+}
