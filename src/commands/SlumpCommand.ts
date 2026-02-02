@@ -36,11 +36,12 @@ export class SlumpCommand implements ISlashCommand {
         const room = context.getRoom();
         const sender = context.getSender();
         const firstArg = args[0];
-        const subcommand = firstArg ? firstArg.toLowerCase() : "tarning";
+        const subcommand = firstArg ? firstArg.toLowerCase() : "tärning";
 
         let message: string;
 
         switch (subcommand) {
+            case "tärning":
             case "tarning":
             case "dice":
             case "d6":
@@ -62,22 +63,23 @@ export class SlumpCommand implements ISlashCommand {
                 const members = await read.getRoomReader().getMembers(room.id);
                 const picked = DiceRoller.pickRandom(members);
                 if (picked) {
-                    message = ":bust_in_silhouette: **@" + picked.username + "** valdes slumpmassigt av " + sender.username + "!";
+                    message = ":bust_in_silhouette: **@" + picked.username + "** valdes slumpmässigt av " + sender.username + "!";
                 } else {
-                    message = ":x: Kunde inte hitta nagra medlemmar i kanalen.";
+                    message = ":x: Kunde inte hitta några medlemmar i kanalen.";
                 }
                 break;
 
+            case "hjälp":
             case "hjalp":
             case "help":
-                message = "**:game_die: Tarningen - Hjalp**\n\n" +
-                    "*/slump tarning* - Sla en D6 tarning\n" +
+                message = "**:game_die: Tärningen - Hjälp**\n\n" +
+                    "*/slump tärning* - Slå en D6-tärning\n" +
                     "*/slump krona* - Singla slant (krona/klave)\n" +
-                    "*/slump person* - Valj en slumpmassig person i kanalen";
+                    "*/slump person* - Välj en slumpmässig person i kanalen";
                 break;
 
             default:
-                message = ":question: Okant kommando: \"" + subcommand + "\". Skriv */slump hjalp* for att se tillgangliga kommandon.";
+                message = ":question: Okänt kommando: \"" + subcommand + "\". Skriv */slump hjälp* för att se tillgängliga kommandon.";
         }
 
         await this.sendMessage(room, message, sender, modify);
