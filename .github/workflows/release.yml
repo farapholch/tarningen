@@ -1,0 +1,173 @@
+name: Create Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version_bump:
+        description: 'Version bump type'
+        required: true
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+          - custom
+        default: patch
+      custom_version:
+        description: 'Custom version (only if "custom" is selected)'
+        required: false
+        type: string
+      release_type:
+        description: 'Type of release'
+        required: true
+        type: choice
+        options:
+          - release
+          - prerelease
+        default: release
+      release_notes:
+        description: 'Release notes (optional)'
+        required: false
+        type: string
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get current version and calculate next
+        id: version
+        run: |
+          # Get current version from app.json
+          CURRENT_VERSION=$(grep -o '"version": "[^"]*"' app.json | cut -d'"' -f4)
+          echo "Current version: $CURRENT_VERSION"
+
+          # Split version into parts
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT_VERSION"
+
+          # Calculate next version based on bump type
+          if [[ "${{ inputs.version_bump }}" == "custom" ]]; then
+            NEW_VERSION="${{ inputs.custom_version }}"
+          elif [[ "${{ inputs.version_bump }}" == "major" ]]; then
+            MAJOR=$((MAJOR + 1))
+            MINOR=0
+            PATCH=0
+            NEW_VERSION="${MAJOR}.${MINOR}.${PATCH}"
+          elif [[ "${{ inputs.version_bump }}" == "minor" ]]; then
+            MINOR=$((MINOR + 1))
+            PATCH=0
+            NEW_VERSION="${MAJOR}.${MINOR}.${PATCH}"
+          else
+            PATCH=$((PATCH + 1))
+            NEW_VERSION="${MAJOR}.${MINOR}.${PATCH}"
+          fi
+
+          echo "New version: $NEW_VERSION"
+          echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "current=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+      
+      - name: Update app.json with new version
+        run: |
+          sed -i 's/"version": "[^"]*"/"version": "${{ steps.version.outputs.version }}"/' app.json
+          git config user.name "GitHub Actions Bot"
+          git config user.email "actions@github.com"
+          git add app.json
+          git commit -m "chore: bump version to ${{ steps.version.outputs.version }}"
+          git push
+
+      - name: Generate automatic release notes
+        id: release_notes
+        run: |
+          PREV_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+
+          if [[ -z "$PREV_TAG" ]]; then
+            COMMITS=$(git log --pretty=format:"- %s (%h)" --no-merges)
+          else
+            COMMITS=$(git log ${PREV_TAG}..HEAD --pretty=format:"- %s (%h)" --no-merges)
+          fi
+
+          # Create release notes
+          CUSTOM_NOTES="${{ inputs.release_notes }}"
+          if [[ -z "$CUSTOM_NOTES" ]]; then
+            RELEASE_BODY="## Changes since ${{ steps.version.outputs.current }}
+          
+          $COMMITS"
+          else
+            RELEASE_BODY="$CUSTOM_NOTES"
+          fi
+          
+          # Save to GitHub output using heredoc
+          {
+            echo 'notes<<EOF'
+            echo "$RELEASE_BODY"
+            echo 'EOF'
+          } >> $GITHUB_OUTPUT
+          
+          echo "Generated release notes"
+      
+      - name: Pull latest changes with updated version
+        run: |
+          git pull origin ${{ github.ref_name }}
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install Rocket.Chat Apps CLI
+        run: npm install -g @rocket.chat/apps-cli
+
+      - name: Build app package
+        run: rc-apps package
+
+      - name: Get package filename
+        id: package
+        run: |
+          PACKAGE_FILE=$(ls dist/*.zip | head -n 1)
+          PACKAGE_NAME=$(basename "$PACKAGE_FILE")
+          echo "file=$PACKAGE_FILE" >> $GITHUB_OUTPUT
+          echo "name=$PACKAGE_NAME" >> $GITHUB_OUTPUT
+
+      - name: Create Git tag
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "actions@github.com"
+          git tag -a "v${{ steps.version.outputs.version }}" -m "Release v${{ steps.version.outputs.version }}"
+          git push origin "v${{ steps.version.outputs.version }}"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ steps.version.outputs.version }}
+          name: Release v${{ steps.version.outputs.version }}
+          body: ${{ steps.release_notes.outputs.notes }}
+          draft: false
+          prerelease: ${{ inputs.release_type == 'prerelease' }}
+          files: ${{ steps.package.outputs.file }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate summary
+        run: |
+          echo "# Release Summary 🎉" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Previous Version:** ${{ steps.version.outputs.current }}" >> $GITHUB_STEP_SUMMARY
+          echo "**New Version:** v${{ steps.version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Version Bump:** ${{ inputs.version_bump }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Release Type:** ${{ inputs.release_type }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Package:** \`${{ steps.package.outputs.name }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ GitHub Release created with app package attached" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Git tag v${{ steps.version.outputs.version }} created" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Automatic release notes generated from commits" >> $GITHUB_STEP_SUMMARY
+          echo "✅ app.json updated to version ${{ steps.version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
