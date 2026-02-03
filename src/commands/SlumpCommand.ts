@@ -47,7 +47,7 @@ export class SlumpCommand implements ISlashCommand {
             case "dice":
             case "d6":
                 const roll = DiceRoller.rollD6();
-                message = "🎲 " + sender.username + " slog en **" + roll + "**!";
+                message = sender.username + " slog en " + roll;
                 break;
 
             case "krona":
@@ -55,7 +55,7 @@ export class SlumpCommand implements ISlashCommand {
             case "mynt":
                 const flip = DiceRoller.flipCoin();
                 const flipResult = flip === "heads" ? "Krona" : "Klave";
-                message = "🪙 " + sender.username + ": **" + flipResult + "**!";
+                message = sender.username + ": " + flipResult;
                 break;
 
             case "person":
@@ -64,23 +64,23 @@ export class SlumpCommand implements ISlashCommand {
                 const members = await read.getRoomReader().getMembers(room.id);
                 const picked = DiceRoller.pickRandom(members);
                 if (picked) {
-                    message = "👤 **@" + picked.username + "** valdes slumpmässigt av " + sender.username + "!";
+                    message = picked.username + " valdes slumpmassigt av " + sender.username;
                 } else {
-                    message = "❌ Kunde inte hitta några medlemmar i kanalen.";
+                    message = "Kunde inte hitta nagra medlemmar i kanalen";
                 }
                 break;
 
             case "hjälp":
             case "hjalp":
             case "help":
-                message = "**🎲 Tärningen - Hjälp**\n\n" +
-                    "*/slump tärning* - Slå en D6-tärning\n" +
-                    "*/slump krona* - Singla slant (krona/klave)\n" +
-                    "*/slump person* - Välj en slumpmässig person i kanalen";
+                message = "Tarningen - Hjalp\n\n" +
+                    "/slump tarning - Sla en D6-tarning\n" +
+                    "/slump krona - Singla slant (krona/klave)\n" +
+                    "/slump person - Valj en slumpmassig person i kanalen";
                 break;
 
             default:
-                message = "❓ Okänt kommando: \"" + subcommand + "\". Skriv */slump hjälp* för att se tillgängliga kommandon.";
+                message = "Okant kommando: " + subcommand + ". Skriv /slump hjalp for att se tillgangliga kommandon.";
         }
 
         await this.sendMessage(room, message, modify);

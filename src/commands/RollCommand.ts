@@ -47,7 +47,7 @@ export class RollCommand implements ISlashCommand {
             case "tärning":
             case "tarning":
                 const roll = DiceRoller.rollD6();
-                message = "🎲 " + sender.username + " slog en **" + roll + "**!";
+                message = sender.username + " slog en " + roll;
                 break;
 
             case "coin":
@@ -55,7 +55,7 @@ export class RollCommand implements ISlashCommand {
             case "krona":
                 const flip = DiceRoller.flipCoin();
                 const flipResult = flip === "heads" ? "Krona" : "Klave";
-                message = "🪙 " + sender.username + ": **" + flipResult + "**!";
+                message = sender.username + ": " + flipResult;
                 break;
 
             case "person":
@@ -64,24 +64,24 @@ export class RollCommand implements ISlashCommand {
                 const members = await read.getRoomReader().getMembers(room.id);
                 const picked = DiceRoller.pickRandom(members);
                 if (picked) {
-                    message = "👤 **@" + picked.username + "** valdes slumpmässigt av " + sender.username + "!";
+                    message = picked.username + " valdes slumpmassigt av " + sender.username;
                 } else {
-                    message = "❌ Kunde inte hitta några medlemmar i kanalen.";
+                    message = "Kunde inte hitta nagra medlemmar i kanalen";
                 }
                 break;
 
             case "help":
             case "hjälp":
             case "hjalp":
-                message = "**🎲 Roll - Hjälp**\n\n" +
-                    "*/roll* eller */roll d6* - Slå en D6-tärning\n" +
-                    "*/roll coin* - Singla slant\n" +
-                    "*/roll person* - Välj slumpmässig person i kanalen";
+                message = "Roll - Hjalp\n\n" +
+                    "/roll eller /roll d6 - Sla en D6-tarning\n" +
+                    "/roll coin - Singla slant\n" +
+                    "/roll person - Valj slumpmassig person i kanalen";
                 break;
 
             default:
                 const defaultRoll = DiceRoller.rollD6();
-                message = "🎲 " + sender.username + " slog en **" + defaultRoll + "**!";
+                message = sender.username + " slog en " + defaultRoll;
         }
 
         await this.sendMessage(room, message, modify);
