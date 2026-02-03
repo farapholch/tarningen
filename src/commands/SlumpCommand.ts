@@ -95,7 +95,7 @@ export class SlumpCommand implements ISlashCommand {
             .setRoom(room)
             .setText(text)
             .setUsernameAlias("Tärningen")
-            .setEmojiAvatar(":game_die:");
+            .setAvatarUrl(AVATAR_BASE64);
 
         await modify.getCreator().finish(messageBuilder);
     }
