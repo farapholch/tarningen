@@ -95,6 +95,7 @@ export class RollCommand implements ISlashCommand {
         const messageBuilder = modify.getCreator().startMessage()
             .setRoom(room)
             .setText(text)
+            .setUsernameAlias("Tärningen")
             .setAvatarUrl(AVATAR_BASE64);
 
         await modify.getCreator().finish(messageBuilder);
