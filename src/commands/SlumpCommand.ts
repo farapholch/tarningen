@@ -55,7 +55,7 @@ export class SlumpCommand implements ISlashCommand {
             case "mynt":
                 const flip = DiceRoller.flipCoin();
                 const flipResult = flip === "heads" ? "Krona" : "Klave";
-                message = "🪙 " + sender.name + ": **" + flipResult + "**!";
+                message = "🪙 " + sender.name + " singlade ett mynt och fick **" + flipResult + "**!";
                 break;
 
             case "person":
@@ -83,20 +83,18 @@ export class SlumpCommand implements ISlashCommand {
                 message = "❓ Okänt kommando: \"" + subcommand + "\". Skriv */slump hjälp* för att se tillgängliga kommandon.";
         }
 
-        await this.sendMessage(room, message, modify);
-    }
-
-    private async sendMessage(
-        room: IRoom,
-        text: string,
-        modify: IModify
-    ): Promise<void> {
-        const messageBuilder = modify.getCreator().startMessage()
+        // Skicka meddelande som användarens eget konto
+        const builder = modify.getCreator().startMessage()
+            .setSender(sender)
             .setRoom(room)
-            .setText(text)
-            .setUsernameAlias("Tärningen")
-            .setAvatarUrl(AVATAR_BASE64);
+            .setText(message);
 
-        await modify.getCreator().finish(messageBuilder);
+        // Om kommandot kördes i en tråd, svara i samma tråd
+        const threadId = context.getThreadId();
+        if (threadId) {
+            builder.setThreadId(threadId);
+        }
+
+        await modify.getCreator().finish(builder);
     }
 }

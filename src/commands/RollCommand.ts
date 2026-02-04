@@ -33,15 +33,25 @@ export class RollCommand implements ISlashCommand {
         http: IHttp,
         persis: IPersistence
     ): Promise<void> {
-        const args = context.getArguments();
-        const room = context.getRoom();
         const sender = context.getSender();
-        const firstArg = args[0];
-        const subcommand = firstArg ? firstArg.toLowerCase() : "d6";
+        const room = context.getRoom();
+        const args = context.getArguments();
+        const subcommand = args[0]?.toLowerCase();
 
-        let message: string;
+        let message = "";
 
         switch (subcommand) {
+            case "help":
+            case "hjälp":
+            case "hjalp":
+                message = `**Tärningen - Hjälp**\n\n` +
+                    `**Kommandon:**\n` +
+                    `• \`/roll\` eller \`/roll tarning\` - Slå en tärning (1-6)\n` +
+                    `• \`/roll krona\` eller \`/roll flip\` - Singla mynt (Krona/Klave)\n` +
+                    `• \`/roll person\` - Välj slumpmässig person i kanalen\n` +
+                    `• \`/roll help\` - Visa denna hjälp`;
+                break;
+
             case "d6":
             case "dice":
             case "tärning":
@@ -53,9 +63,10 @@ export class RollCommand implements ISlashCommand {
             case "coin":
             case "flip":
             case "krona":
+            case "klave":
                 const flip = DiceRoller.flipCoin();
                 const flipResult = flip === "heads" ? "Krona" : "Klave";
-                message = "🪙 " + sender.name + ": **" + flipResult + "**!";
+                message = "🪙 " + sender.name + " singlade ett mynt och fick **" + flipResult + "**!";
                 break;
 
             case "person":
@@ -70,21 +81,23 @@ export class RollCommand implements ISlashCommand {
                 }
                 break;
 
-            case "help":
-            case "hjälp":
-            case "hjalp":
-                message = "**🎲 Roll - Hjälp**\n\n" +
-                    "*/roll* eller */roll d6* - Slå en D6-tärning\n" +
-                    "*/roll coin* - Singla slant\n" +
-                    "*/roll person* - Välj slumpmässig person i kanalen";
-                break;
-
             default:
                 const defaultRoll = DiceRoller.rollD6();
                 message = "🎲 " + sender.name + " slog en **" + defaultRoll + "**!";
         }
 
-        await this.sendMessage(room, message, modify);
+        const builder = modify.getCreator().startMessage()
+            .setSender(sender)
+            .setRoom(room)
+            .setText(message);
+
+        // Om kommandot kördes i en tråd, svara i samma tråd
+        const threadId = context.getThreadId();
+        if (threadId) {
+            builder.setThreadId(threadId);
+        }
+
+        await modify.getCreator().finish(builder);
     }
 
     private async sendMessage(
