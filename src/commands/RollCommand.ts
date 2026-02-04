@@ -75,7 +75,24 @@ export class RollCommand implements ISlashCommand {
                 const members = await read.getRoomReader().getMembers(room.id);
                 const picked = DiceRoller.pickRandom(members);
                 if (picked) {
-                    message = "👤 **@" + picked.name + "** valdes slumpmässigt av " + sender.name + "!";
+                    message = "👤 **" + picked.name + "** valdes slumpmässigt av " + sender.name + "!";
+                    
+                    const builder = modify.getCreator().startMessage()
+                        .setSender(sender)
+                        .setRoom(room)
+                        .setText(message);
+                    
+                    // Lägg till mention så personen notifieras
+                    const mentions = builder.getMentionedUsers();
+                    mentions.push(picked);
+                    
+                    const threadId = context.getThreadId();
+                    if (threadId) {
+                        builder.setThreadId(threadId);
+                    }
+                    
+                    await modify.getCreator().finish(builder);
+                    return; // Avsluta tidigt eftersom vi redan skickat meddelandet
                 } else {
                     message = "❌ Kunde inte hitta några medlemmar i kanalen.";
                 }
