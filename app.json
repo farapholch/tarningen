@@ -6,8 +6,8 @@
     "author": {
         "name": "Team Våffla",
         "homepage": "https://www.trafikverket.se",
-        "support": "https://chat.pelleops.se"
-    },
+        "support": "mailto:support@rocket.chat"
+   },
     "name": "Tärningen",
     "nameSlug": "tarningen",
     "classFile": "src/TarningenApp.ts",

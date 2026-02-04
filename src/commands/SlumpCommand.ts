@@ -47,7 +47,7 @@ export class SlumpCommand implements ISlashCommand {
             case "dice":
             case "d6":
                 const roll = DiceRoller.rollD6();
-                message = "🎲 " + sender.username + " slog en **" + roll + "**!";
+                message = "🎲 " + sender.name + " slog en **" + roll + "**!";
                 break;
 
             case "krona":

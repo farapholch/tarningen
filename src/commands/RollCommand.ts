@@ -47,7 +47,7 @@ export class RollCommand implements ISlashCommand {
             case "tärning":
             case "tarning":
                 const roll = DiceRoller.rollD6();
-                message = "🎲 " + sender.username + " slog en **" + roll + "**!";
+                message = "🎲 " + sender.name + " slog en **" + roll + "**!";
                 break;
 
             case "coin":
@@ -81,7 +81,7 @@ export class RollCommand implements ISlashCommand {
 
             default:
                 const defaultRoll = DiceRoller.rollD6();
-                message = "🎲 " + sender.username + " slog en **" + defaultRoll + "**!";
+                message = "🎲 " + sender.name + " slog en **" + defaultRoll + "**!";
         }
 
         await this.sendMessage(room, message, modify);
