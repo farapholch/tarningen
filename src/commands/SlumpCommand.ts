@@ -64,7 +64,7 @@ export class SlumpCommand implements ISlashCommand {
                 const members = await read.getRoomReader().getMembers(room.id);
                 const picked = DiceRoller.pickRandom(members);
                 if (picked) {
-                    message = "👤 **@" + picked.username + "** valdes slumpmässigt av " + sender.username + "!";
+                    message = "👤 **@" + picked.name + "** valdes slumpmässigt av " + sender.name + "!";
                 } else {
                     message = "❌ Kunde inte hitta några medlemmar i kanalen.";
                 }
