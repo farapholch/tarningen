@@ -55,7 +55,7 @@ export class SlumpCommand implements ISlashCommand {
             case "mynt":
                 const flip = DiceRoller.flipCoin();
                 const flipResult = flip === "heads" ? "Krona" : "Klave";
-                message = "🪙 " + sender.username + ": **" + flipResult + "**!";
+                message = "🪙 " + sender.name + ": **" + flipResult + "**!";
                 break;
 
             case "person":
