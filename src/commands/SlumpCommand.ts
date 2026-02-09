@@ -41,6 +41,24 @@ export class SlumpCommand implements ISlashCommand {
 
         let message: string;
 
+        // Kolla om det är ett intervall (t.ex. "1-10" eller "1-100")
+        const rangeMatch = subcommand.match(/^(\d+)-(\d+)$/);
+        if (rangeMatch) {
+            const min = parseInt(rangeMatch[1], 10);
+            const max = parseInt(rangeMatch[2], 10);
+
+            if (min >= max) {
+                message = "❌ Ogiltigt intervall! Första talet måste vara mindre än det andra.";
+            } else if (min < 0 || max > 1000000) {
+                message = "❌ Intervallet måste vara mellan 0 och 1000000.";
+            } else {
+                const result = DiceRoller.rollRange(min, max);
+                message = "🎯 " + sender.name + " slumpade **" + result + "** (" + min + "-" + max + ")";
+            }
+            await this.sendMessageWithThread(context, room, sender, message, modify);
+            return;
+        }
+
         switch (subcommand) {
             case "tärning":
             case "tarning":
@@ -64,24 +82,8 @@ export class SlumpCommand implements ISlashCommand {
                 const members = await read.getRoomReader().getMembers(room.id);
                 const picked = DiceRoller.pickRandom(members);
                 if (picked) {
-                    message = "👤 **" + picked.name + "** valdes slumpmässigt av " + sender.name + "!";
-                    
-                    const builder = modify.getCreator().startMessage()
-                        .setSender(sender)
-                        .setRoom(room)
-                        .setText(message);
-                    
-                    // Lägg till mention så personen notifieras
-                    const mentions = builder.getMentionedUsers();
-                    mentions.push(picked);
-                    
-                    const threadId = context.getThreadId();
-                    if (threadId) {
-                        builder.setThreadId(threadId);
-                    }
-                    
-                    await modify.getCreator().finish(builder);
-                    return; // Avsluta tidigt eftersom vi redan skickat meddelandet
+                    // Använd @username för att skapa mention
+                    message = "👤 **@" + picked.username + "** valdes slumpmässigt av " + sender.name + "!";
                 } else {
                     message = "❌ Kunde inte hitta några medlemmar i kanalen.";
                 }
@@ -93,20 +95,30 @@ export class SlumpCommand implements ISlashCommand {
                 message = "**🎲 Tärningen - Hjälp**\n\n" +
                     "*/slump tärning* - Slå en D6-tärning\n" +
                     "*/slump krona* - Singla slant (krona/klave)\n" +
-                    "*/slump person* - Välj en slumpmässig person i kanalen";
+                    "*/slump person* - Välj en slumpmässig person i kanalen\n" +
+                    "*/slump 1-10* - Slumpa ett tal mellan 1 och 10\n" +
+                    "*/slump 1-100* - Slumpa ett tal mellan 1 och 100";
                 break;
 
             default:
                 message = "❓ Okänt kommando: \"" + subcommand + "\". Skriv */slump hjälp* för att se tillgängliga kommandon.";
         }
 
-        // Skicka meddelande som användarens eget konto
+        await this.sendMessageWithThread(context, room, sender, message, modify);
+    }
+
+    private async sendMessageWithThread(
+        context: SlashCommandContext,
+        room: IRoom,
+        sender: IUser,
+        text: string,
+        modify: IModify
+    ): Promise<void> {
         const builder = modify.getCreator().startMessage()
             .setSender(sender)
             .setRoom(room)
-            .setText(message);
+            .setText(text);
 
-        // Om kommandot kördes i en tråd, svara i samma tråd
         const threadId = context.getThreadId();
         if (threadId) {
             builder.setThreadId(threadId);

@@ -36,9 +36,27 @@ export class RollCommand implements ISlashCommand {
         const sender = context.getSender();
         const room = context.getRoom();
         const args = context.getArguments();
-        const subcommand = args[0]?.toLowerCase();
+        const subcommand = args[0]?.toLowerCase() || "tarning";
 
         let message = "";
+
+        // Kolla om det är ett intervall (t.ex. "1-10" eller "1-100")
+        const rangeMatch = subcommand.match(/^(\d+)-(\d+)$/);
+        if (rangeMatch) {
+            const min = parseInt(rangeMatch[1], 10);
+            const max = parseInt(rangeMatch[2], 10);
+
+            if (min >= max) {
+                message = "❌ Ogiltigt intervall! Första talet måste vara mindre än det andra.";
+            } else if (min < 0 || max > 1000000) {
+                message = "❌ Intervallet måste vara mellan 0 och 1000000.";
+            } else {
+                const result = DiceRoller.rollRange(min, max);
+                message = "🎯 " + sender.name + " slumpade **" + result + "** (" + min + "-" + max + ")";
+            }
+            await this.sendMessageWithThread(context, room, sender, message, modify);
+            return;
+        }
 
         switch (subcommand) {
             case "help":
@@ -49,6 +67,8 @@ export class RollCommand implements ISlashCommand {
                     `• \`/roll\` eller \`/roll tarning\` - Slå en tärning (1-6)\n` +
                     `• \`/roll krona\` eller \`/roll flip\` - Singla mynt (Krona/Klave)\n` +
                     `• \`/roll person\` - Välj slumpmässig person i kanalen\n` +
+                    `• \`/roll 1-10\` - Slumpa ett tal mellan 1 och 10\n` +
+                    `• \`/roll 1-100\` - Slumpa ett tal mellan 1 och 100\n` +
                     `• \`/roll help\` - Visa denna hjälp`;
                 break;
 
@@ -75,24 +95,8 @@ export class RollCommand implements ISlashCommand {
                 const members = await read.getRoomReader().getMembers(room.id);
                 const picked = DiceRoller.pickRandom(members);
                 if (picked) {
-                    message = "👤 **" + picked.name + "** valdes slumpmässigt av " + sender.name + "!";
-                    
-                    const builder = modify.getCreator().startMessage()
-                        .setSender(sender)
-                        .setRoom(room)
-                        .setText(message);
-                    
-                    // Lägg till mention så personen notifieras
-                    const mentions = builder.getMentionedUsers();
-                    mentions.push(picked);
-                    
-                    const threadId = context.getThreadId();
-                    if (threadId) {
-                        builder.setThreadId(threadId);
-                    }
-                    
-                    await modify.getCreator().finish(builder);
-                    return; // Avsluta tidigt eftersom vi redan skickat meddelandet
+                    // Använd @username för att skapa mention
+                    message = "👤 **@" + picked.username + "** valdes slumpmässigt av " + sender.name + "!";
                 } else {
                     message = "❌ Kunde inte hitta några medlemmar i kanalen.";
                 }
@@ -103,12 +107,21 @@ export class RollCommand implements ISlashCommand {
                 message = "🎲 " + sender.name + " slog en **" + defaultRoll + "**!";
         }
 
+        await this.sendMessageWithThread(context, room, sender, message, modify);
+    }
+
+    private async sendMessageWithThread(
+        context: SlashCommandContext,
+        room: IRoom,
+        sender: IUser,
+        text: string,
+        modify: IModify
+    ): Promise<void> {
         const builder = modify.getCreator().startMessage()
             .setSender(sender)
             .setRoom(room)
-            .setText(message);
+            .setText(text);
 
-        // Om kommandot kördes i en tråd, svara i samma tråd
         const threadId = context.getThreadId();
         if (threadId) {
             builder.setThreadId(threadId);

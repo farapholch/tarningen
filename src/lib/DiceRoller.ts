@@ -3,6 +3,10 @@ export class DiceRoller {
         return Math.floor(Math.random() * 6) + 1;
     }
 
+    public static rollRange(min: number, max: number): number {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
     public static flipCoin(): "heads" | "tails" {
         return Math.random() < 0.5 ? "heads" : "tails";
     }
