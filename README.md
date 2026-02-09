@@ -2,7 +2,7 @@
 
 En Rocket.Chat-app med slumpfunktioner för Snacka.
 
-**Av Team Våffla** | **Version 3.1.0**
+**Av Team Våffla** | **Version 3.2.0**
 
 ## Kommandon
 
@@ -51,7 +51,7 @@ Du kan använda vilket intervall som helst mellan 0 och 1000000:
 
 ## Installation
 
-1. Ladda ner `tarningen_3.1.0.zip` från [Releases](https://github.com/farapholch/tarningen/releases)
+1. Ladda ner `tarningen_3.2.0.zip` från [Releases](https://github.com/farapholch/tarningen/releases)
 
 2. I Rocket.Chat: **Admin → Apps → ⋮ → Private Apps → Upload App**
 
