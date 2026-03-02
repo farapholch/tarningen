@@ -1,6 +1,6 @@
 # <img src="icon.png" width="32" alt="icon"> Tärningen
 
-A Rocket.Chat app with random functions for Snacka.
+A Rocket.Chat app with random functions.
 
 **By Team Våffla** | **Version 3.2.4**
 
