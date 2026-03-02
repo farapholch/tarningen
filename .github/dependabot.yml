@@ -11,6 +11,16 @@ updates:
       prefix: "chore(deps)"
     labels:
       - "dependencies"
+    groups:
+      # Group TypeScript types together to avoid compatibility issues
+      typescript-types:
+        patterns:
+          - "@types/*"
+          - "undici-types"
+    ignore:
+      # Ignore major @types/node updates - too risky for auto-merge
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
 
   # GitHub Actions
   - package-ecosystem: "github-actions"
