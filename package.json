@@ -15,6 +15,6 @@
     "dependencies": {
         "@rocket.chat/ui-kit": "^0.39.0",
         "@types/node": "^16.18.126",
-        "undici-types": "^7.20.0"
+        "undici-types": "^7.22.0"
     }
 }
