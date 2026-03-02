@@ -9,7 +9,7 @@
         "deploy": "rc-apps deploy --url https://chat.pelleops.se --username admin --password $RC_ADMIN_PASSWORD"
     },
     "devDependencies": {
-        "@rocket.chat/apps-engine": "^1.41.0",
+        "@rocket.chat/apps-engine": "^1.60.0",
         "typescript": "^5.0.0"
     },
     "dependencies": {
