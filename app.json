@@ -1,7 +1,7 @@
 {
     "id": "e8f3c9a2-7b4d-4e5f-8a1c-2d3e4f5a6b7c",
     "version": "3.2.4",
-    "requiredApiVersion": "^1.41.0",
+    "requiredApiVersion": "^1.62.0",
     "iconFile": "icon.png",
     "author": {
         "name": "Team Våffla",

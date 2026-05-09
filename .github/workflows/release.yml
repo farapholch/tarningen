@@ -128,7 +128,7 @@ jobs:
         run: npm install -g @rocket.chat/apps-cli
 
       - name: Build app package
-        run: rc-apps package
+        run: rc-apps package --experimental-native-compiler
 
       - name: Get package filename
         id: package
